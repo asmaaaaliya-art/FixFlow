@@ -1,0 +1,1238 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FixFlow | Service Management</title>
+
+<style>
+:root {
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --primary: #4f46e5;
+    --primary-dark: #3730a3;
+    --text: #172033;
+    --muted: #697386;
+    --border: #e5e7eb;
+    --green: #15803d;
+    --red: #dc2626;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+button, input, textarea, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
+.layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 245px minmax(0, 1fr);
+}
+
+.sidebar {
+    background: #111827;
+    color: white;
+    padding: 28px 18px;
+}
+
+.brand {
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.brand span {
+    color: #a5b4fc;
+}
+
+.sidebar p {
+    color: #9ca3af;
+    font-size: 13px;
+    margin-bottom: 35px;
+}
+
+.nav-button {
+    width: 100%;
+    text-align: left;
+    padding: 13px 14px;
+    margin: 4px 0;
+    border-radius: 9px;
+    color: #d1d5db;
+    background: transparent;
+}
+
+.nav-button:hover,
+.nav-button.active {
+    background: #3730a3;
+    color: white;
+}
+
+.sidebar-bottom {
+    margin-top: 40px;
+}
+
+.main {
+    min-width: 0;
+    padding: 30px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.topbar h1 {
+    font-size: 28px;
+    margin-bottom: 7px;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.user-pill {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.card, .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .03);
+}
+
+.card-label {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.card-number {
+    font-size: 30px;
+    font-weight: 750;
+    margin-top: 12px;
+}
+
+.panel {
+    margin-bottom: 22px;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.panel-heading h2 {
+    font-size: 18px;
+}
+
+.btn {
+    padding: 11px 15px;
+    border-radius: 9px;
+    background: var(--primary);
+    color: white;
+    font-weight: 650;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secondary {
+    background: #eef2ff;
+    color: #3730a3;
+}
+
+.btn-secondary:hover {
+    background: #e0e7ff;
+}
+
+.btn-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-small {
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.field input,
+.field textarea,
+.field select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    background: white;
+    outline: none;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px #e0e7ff;
+}
+
+.field textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    margin-top: 17px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 650px;
+}
+
+th, td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+th {
+    color: var(--muted);
+    font-weight: 650;
+    background: #fafafa;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 750;
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.status.OPEN {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status.ASSIGNED {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.status.IN_PROGRESS {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status.RESOLVED,
+.status.CLOSED {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message {
+    padding: 12px 14px;
+    border-radius: 9px;
+    margin-bottom: 18px;
+    display: none;
+    font-size: 14px;
+}
+
+.message.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+}
+
+.message.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.auth-screen {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #111827, #312e81);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 30px;
+    background: white;
+    border-radius: 18px;
+}
+
+.auth-card h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.auth-card .field {
+    margin-top: 17px;
+}
+
+.auth-card .btn {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.link-button {
+    background: none;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.empty {
+    padding: 25px 10px;
+    text-align: center;
+    color: var(--muted);
+}
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        padding: 18px;
+    }
+
+    .sidebar p {
+        margin-bottom: 12px;
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .nav-button {
+        width: auto;
+    }
+
+    .sidebar-bottom {
+        margin-top: 12px;
+    }
+
+    .main {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .topbar h1 {
+        font-size: 24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN / REGISTRATION -->
+<section id="authScreen" class="auth-screen">
+    <div class="auth-card">
+        <h1><span style="color:#4f46e5">Fix</span>Flow</h1>
+        <p class="muted">Your service management workspace.</p>
+
+        <div id="authMessage" class="message" style="margin-top:18px"></div>
+
+        <form id="loginForm">
+            <div class="field">
+                <label for="loginEmail">Email</label>
+                <input id="loginEmail" type="email" required
+                       autocomplete="email">
+            </div>
+
+            <div class="field">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" required
+                       autocomplete="current-password">
+            </div>
+
+            <button class="btn" type="submit">Log in</button>
+        </form>
+
+        <form id="registerForm" class="hidden">
+            <div class="field">
+                <label for="registerName">Full name</label>
+                <input id="registerName" required autocomplete="name">
+            </div>
+
+            <div class="field">
+                <label for="registerEmail">Email</label>
+                <input id="registerEmail" type="email" required
+                       autocomplete="email">
+            </div>
+
+            <div class="field">
+                <label for="registerPassword">Password</label>
+                <input id="registerPassword" type="password" required
+                       minlength="8" autocomplete="new-password">
+            </div>
+
+            <button class="btn" type="submit">Create customer account</button>
+        </form>
+
+        <div class="auth-switch">
+            <span id="switchText">New to FixFlow?</span>
+            <button class="link-button" id="switchAuth" type="button">
+                Create an account
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN APPLICATION -->
+<div id="appScreen" class="layout hidden">
+
+    <aside class="sidebar">
+        <div class="brand">Fix<span>Flow</span></div>
+        <p>Service management platform</p>
+
+        <nav>
+            <button class="nav-button active" data-page="dashboard">
+                Dashboard
+            </button>
+            <button class="nav-button" data-page="requests">
+                Service requests
+            </button>
+            <button class="nav-button" data-page="create">
+                + New request
+            </button>
+            <button class="nav-button hidden" id="adminNav"
+                    data-page="admin">
+                Admin panel
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="nav-button" id="logoutButton">Log out</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Dashboard</h1>
+                <p class="muted" id="pageSubtitle">
+                    Welcome to your FixFlow workspace.
+                </p>
+            </div>
+            <div class="user-pill">
+                <strong id="userName">User</strong>
+                <span id="userRole"></span>
+            </div>
+        </header>
+
+        <div id="appMessage" class="message"></div>
+
+        <!-- DASHBOARD -->
+        <section id="dashboardPage" class="page">
+            <div class="cards">
+                <div class="card">
+                    <div class="card-label">Total requests</div>
+                    <div class="card-number" id="totalCount">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Open / assigned</div>
+                    <div class="card-number" id="activeCount">0</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Resolved / closed</div>
+                    <div class="card-number" id="resolvedCount">0</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Recent service requests</h2>
+                    <button class="btn btn-secondary"
+                            onclick="showPage('requests')">
+                        View all
+                    </button>
+                </div>
+                <div id="recentRequests"></div>
+            </div>
+        </section>
+
+        <!-- REQUEST LIST -->
+        <section id="requestsPage" class="page hidden">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Service requests</h2>
+                    <button class="btn" id="refreshButton">Refresh</button>
+                </div>
+                <div id="requestsTable"></div>
+            </div>
+        </section>
+
+        <!-- CREATE REQUEST -->
+        <section id="createPage" class="page hidden">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Create a service request</h2>
+                </div>
+
+                <form id="createRequestForm">
+                    <div class="form-grid">
+                        <div class="field full">
+                            <label for="requestTitle">Request title</label>
+                            <input id="requestTitle" required maxlength="150"
+                                   placeholder="Example: Laptop is not starting">
+                        </div>
+
+                        <div class="field full">
+                            <label for="requestDescription">Description</label>
+                            <textarea id="requestDescription" required
+                                      placeholder="Describe the issue..."></textarea>
+                        </div>
+
+                        <div class="field">
+                            <label for="requestPriority">Priority</label>
+                            <select id="requestPriority">
+                                <option value="LOW">Low</option>
+                                <option value="MEDIUM" selected>Medium</option>
+                                <option value="HIGH">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn" type="submit">
+                            Submit request
+                        </button>
+                        <button class="btn btn-secondary" type="reset">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- COMMENTS -->
+<section id="commentsPage" class="page hidden">
+    <div class="panel">
+        <div class="panel-heading">
+            <h2>Request comments</h2>
+            <button class="btn btn-secondary"
+                    onclick="showPage('requests')">
+                Back to requests
+            </button>
+        </div>
+
+        <p id="commentRequestInfo" class="muted"></p>
+
+        <div id="commentsList"></div>
+
+        <form id="commentForm">
+            <div class="field">
+                <label for="commentMessage">Write a comment</label>
+                <textarea id="commentMessage" required
+                          maxlength="2000"
+                          placeholder="Type your comment..."></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn" type="submit">Send comment</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+        <!-- ADMIN -->
+        <section id="adminPage" class="page hidden">
+            <div class="panel">
+                <div class="panel-heading">
+                    <h2>Manage requests</h2>
+                    <button class="btn" id="adminRefreshButton">
+                        Refresh
+                    </button>
+                </div>
+                <p class="muted" style="margin-bottom:16px">
+                    Assign a technician by entering their user ID.
+                </p>
+                <div id="adminRequestsTable"></div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script>
+"use strict";
+
+/*
+ * CONFIGURATION
+ *
+ * When the frontend is served by the same Flask server, use "".
+ * For a separate frontend development server, use your Flask URL,
+ * for example "http://127.0.0.1:5000".
+ *
+ * Do not use localhost as the API URL in a public deployment.
+ */
+const API_BASE = "http://127.0.0.1:5000";
+const ENDPOINTS = {
+    register: "/auth/register",
+    login: "/auth/login",
+    requests: "/requests/",
+    adminRequests: "/requests/admin",
+    technicianRequests: "/requests/technician",
+    assign: id => `/requests/${id}/assign`,
+    updateStatus: id => `/requests/${id}/status`,
+    comments: id => `/requests/${id}/comments`
+};
+
+let accessToken = null;
+let currentUser = null;
+let serviceRequests = [];
+let activePage = "dashboard";
+
+/* ---------- API HELPERS ---------- */
+
+async function api(path, options = {}) {
+    const headers = {
+        "Content-Type": "application/json",
+        ...(options.headers || {})
+    };
+
+    if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    let response;
+
+    try {
+        response = await fetch(API_BASE + path, {
+            ...options,
+            headers
+        });
+    } catch (error) {
+        throw new Error(
+            "Cannot reach the Flask API. Check that the backend is running and API_BASE is correct."
+        );
+    }
+
+    const rawText = await response.text();
+    let data = {};
+
+    try {
+        data = rawText ? JSON.parse(rawText) : {};
+    } catch {
+        data = { message: rawText };
+    }
+
+    if (!response.ok) {
+        const message =
+            data.error ||
+            data.message ||
+            `Request failed with HTTP ${response.status}`;
+
+        throw new Error(message);
+    }
+
+    return data;
+}
+
+function showMessage(message, type = "success", target = "appMessage") {
+    const element = document.getElementById(target);
+    element.textContent = message;
+    element.className = `message ${type}`;
+
+    window.clearTimeout(element._hideTimer);
+    element._hideTimer = window.setTimeout(() => {
+        element.className = "message";
+    }, 5000);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[character]);
+}
+
+function normaliseRole(role) {
+    return String(role || "customer").toLowerCase();
+}
+
+function getRequestStatus(item) {
+    return String(item.status || "OPEN").toUpperCase();
+}
+
+function statusBadge(status) {
+    const safeStatus = escapeHTML(status);
+    return `<span class="status ${safeStatus}">${safeStatus.replaceAll("_", " ")}</span>`;
+}
+
+
+function requestTable(items, options = {}) {
+    if (!items.length) {
+        return `<div class="empty">No service requests found.</div>`;
+    }
+
+    const adminMode = options.admin === true;
+    const technicianMode =
+        normaliseRole(currentUser?.role) === "technician";
+
+    const rows = items.map(item => {
+        const status = getRequestStatus(item);
+        const requestId = Number(item.id);
+
+        let actions = "";
+
+        if (adminMode) {
+            actions += `
+                <div style="display:flex;gap:6px;align-items:center;min-width:190px">
+                    <input type="number" min="1"
+                        id="tech-${requestId}"
+                        placeholder="Technician ID"
+                        style="width:110px;padding:8px;border:1px solid #ddd;border-radius:7px">
+                    <button class="btn btn-small"
+                        onclick="assignTechnician(${requestId})">
+                        Assign
+                    </button>
+                </div>`;
+        } else if (
+            technicianMode &&
+            ["ASSIGNED", "IN_PROGRESS"].includes(status)
+        ) {
+            const nextStatus = status === "ASSIGNED"
+                ? "IN_PROGRESS"
+                : "RESOLVED";
+
+            actions += `
+                <button class="btn btn-small"
+                    onclick="updateRequestStatus(${requestId}, '${nextStatus}')">
+                    Mark ${nextStatus.replaceAll("_", " ")}
+                </button>`;
+        }
+
+        actions += `
+            <button class="btn btn-small btn-secondary"
+                onclick="openComments(${requestId})">
+                Comments
+            </button>`;
+
+        return `
+            <tr>
+                <td>#${escapeHTML(item.id)}</td>
+                <td>
+                    <strong>${escapeHTML(item.title)}</strong>
+                    <div class="muted" style="margin-top:5px">
+                        ${escapeHTML(item.description || "")}
+                    </div>
+                </td>
+                <td>${escapeHTML(item.priority || "MEDIUM")}</td>
+                <td>${statusBadge(status)}</td>
+                <td>${escapeHTML(item.customer_id ?? "—")}</td>
+                <td>${escapeHTML(item.technician_id ?? "Unassigned")}</td>
+                <td>
+                    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                        ${actions}
+                    </div>
+                </td>
+            </tr>`;
+    }).join("");
+
+    return `
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Request</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Customer ID</th>
+                        <th>Technician ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        </div>`;
+}
+
+
+/* ---------- AUTHENTICATION ---------- */
+
+document.getElementById("switchAuth").addEventListener("click", () => {
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const registering = loginForm.classList.contains("hidden");
+
+    loginForm.classList.toggle("hidden");
+    registerForm.classList.toggle("hidden");
+
+    document.getElementById("switchText").textContent =
+        registering ? "New to FixFlow?" : "Already have an account?";
+
+    document.getElementById("switchAuth").textContent =
+        registering ? "Create an account" : "Log in";
+
+    document.getElementById("authMessage").className = "message";
+});
+
+document.getElementById("registerForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const payload = {
+        name: document.getElementById("registerName").value.trim(),
+        email: document.getElementById("registerEmail").value.trim(),
+        password: document.getElementById("registerPassword").value
+    };
+
+    try {
+        await api(ENDPOINTS.register, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        showMessage(
+            "Account created. You can now log in.",
+            "success",
+            "authMessage"
+        );
+
+        document.getElementById("registerForm").reset();
+        document.getElementById("switchAuth").click();
+    } catch (error) {
+        showMessage(error.message, "error", "authMessage");
+    }
+});
+
+document.getElementById("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const payload = {
+        email: document.getElementById("loginEmail").value.trim(),
+        password: document.getElementById("loginPassword").value
+    };
+
+    try {
+        const data = await api(ENDPOINTS.login, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        /*
+         * Expected login response:
+         * { "access_token": "...", "user": { "id": 1, "name": "...", "role": "customer" } }
+         *
+         * If your Flask login route returns the user fields at the top level,
+         * adapt the line below to match its actual JSON response.
+         */
+        accessToken = data.access_token;
+
+        if (!accessToken) {
+            throw new Error(
+                "Login succeeded but no access_token was returned. Check the Flask login response."
+            );
+        }
+
+        currentUser = data.user || {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+            role: data.role || "customer"
+        };
+
+        if (!currentUser.role) {
+            throw new Error(
+                "Login response has no user role. Check the Flask login response."
+            );
+        }
+
+        document.getElementById("authScreen").classList.add("hidden");
+        document.getElementById("appScreen").classList.remove("hidden");
+
+        document.getElementById("userName").textContent =
+            currentUser.name || currentUser.email || "User";
+
+        document.getElementById("userRole").textContent =
+            ` · ${normaliseRole(currentUser.role)}`;
+
+        document.getElementById("adminNav").classList.toggle(
+            "hidden",
+            normaliseRole(currentUser.role) !== "admin"
+        );
+
+        showPage("dashboard");
+        await loadRequests();
+
+    } catch (error) {
+        showMessage(error.message, "error", "authMessage");
+    }
+});
+
+document.getElementById("logoutButton").addEventListener("click", logout);
+
+function logout() {
+    accessToken = null;
+    currentUser = null;
+    serviceRequests = [];
+
+    document.getElementById("appScreen").classList.add("hidden");
+    document.getElementById("authScreen").classList.remove("hidden");
+    document.getElementById("loginForm").reset();
+
+    showPage("dashboard");
+}
+
+/* ---------- NAVIGATION ---------- */
+
+document.querySelectorAll(".nav-button[data-page]").forEach(button => {
+    button.addEventListener("click", () => {
+        showPage(button.dataset.page);
+    });
+});
+
+function showPage(page) {
+    if (page === "admin" &&
+        normaliseRole(currentUser?.role) !== "admin") {
+        showMessage("Admin access required.", "error");
+        return;
+    }
+
+    activePage = page;
+
+    document.querySelectorAll(".page").forEach(section => {
+        section.classList.add("hidden");
+    });
+
+    const selectedPage = document.getElementById(`${page}Page`);
+    if (selectedPage) selectedPage.classList.remove("hidden");
+
+    document.querySelectorAll(".nav-button[data-page]").forEach(button => {
+        button.classList.toggle("active", button.dataset.page === page);
+    });
+
+    const titles = {
+    dashboard: ["Dashboard", "Your service activity at a glance."],
+    requests: ["Service requests", "Track your requests and their status."],
+    create: ["New request", "Tell us what needs fixing."],
+    admin: ["Admin panel", "Manage service requests and assignments."],
+    comments: ["Request comments", "Discuss your service request."]
+};
+
+   document.getElementById("pageTitle").textContent = titles[page][0];
+document.getElementById("pageSubtitle").textContent = titles[page][1];
+
+if (page === "admin") {
+    loadRequests();
+}
+}
+/* ---------- SERVICE REQUESTS ---------- */
+
+async function loadRequests() {
+    if (!accessToken || !currentUser) return;
+
+    try {
+       const role = normaliseRole(currentUser.role);
+
+const endpoint = role === "admin"
+    ? ENDPOINTS.adminRequests
+    : role === "technician"
+        ? ENDPOINTS.technicianRequests
+        : ENDPOINTS.requests;
+
+        const data = await api(endpoint);
+
+        /*
+         * Supports either:
+         * [ { id, title, ... }, ... ]
+         * or { requests: [...] }
+         * or { service_requests: [...] }
+         */
+        serviceRequests = Array.isArray(data)
+            ? data
+            : data.requests || data.service_requests || [];
+
+        renderDashboard();
+        renderRequests();
+
+       if (role === "admin") {
+    document.getElementById("adminRequestsTable").innerHTML =
+        requestTable(serviceRequests, { admin: true });
+}
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+}
+
+function renderDashboard() {
+    const total = serviceRequests.length;
+    const resolved = serviceRequests.filter(item =>
+        ["RESOLVED", "CLOSED"].includes(getRequestStatus(item))
+    ).length;
+
+    document.getElementById("totalCount").textContent = total;
+    document.getElementById("activeCount").textContent = total - resolved;
+    document.getElementById("resolvedCount").textContent = resolved;
+
+    document.getElementById("recentRequests").innerHTML =
+        requestTable(serviceRequests.slice(0, 5));
+}
+
+function renderRequests() {
+    document.getElementById("requestsTable").innerHTML =
+        requestTable(serviceRequests);
+}
+
+document.getElementById("createRequestForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const payload = {
+        title: document.getElementById("requestTitle").value.trim(),
+        description: document.getElementById("requestDescription").value.trim(),
+        priority: document.getElementById("requestPriority").value
+    };
+
+    if (!payload.title || !payload.description) {
+        showMessage("Enter both a title and description.", "error");
+        return;
+    }
+
+    try {
+        await api(ENDPOINTS.requests, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        event.target.reset();
+        showMessage("Service request created successfully.");
+        await loadRequests();
+        showPage("requests");
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+});
+
+/* ---------- ADMIN: ASSIGN TECHNICIAN ---------- */
+
+async function assignTechnician(requestId) {
+    if (normaliseRole(currentUser?.role) !== "admin") {
+        showMessage("Admin access required.", "error");
+        return;
+    }
+
+    const input = document.getElementById(`tech-${requestId}`);
+    const technicianId = Number(input?.value);
+
+    if (!Number.isInteger(technicianId) || technicianId <= 0) {
+        showMessage("Enter a valid technician ID.", "error");
+        return;
+    }
+
+    try {
+        await api(ENDPOINTS.assign(requestId), {
+            method: "PUT",
+            body: JSON.stringify({
+                technician_id: technicianId
+            })
+        });
+
+        showMessage("Technician assigned successfully.");
+        await loadRequests();
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+}
+
+/* ---------- TECHNICIAN: UPDATE STATUS ---------- */
+
+async function updateRequestStatus(requestId, status) {
+    if (normaliseRole(currentUser?.role) !== "technician") {
+        showMessage("Only technicians can update request status.", "error");
+        return;
+    }
+
+    try {
+        await api(ENDPOINTS.updateStatus(requestId), {
+            method: "PUT",
+            body: JSON.stringify({ status })
+        });
+
+        showMessage(`Request updated to ${status.replaceAll("_", " ")}.`);
+        await loadRequests();
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+}
+
+/* ---------- BUTTONS ---------- */
+
+document.getElementById("refreshButton").addEventListener("click", loadRequests);
+document.getElementById("adminRefreshButton").addEventListener("click", loadRequests);
+
+/* No token is stored in localStorage. Log in again after refreshing. */
+let activeCommentRequestId = null;
+
+async function openComments(requestId) {
+    activeCommentRequestId = requestId;
+
+    document.getElementById("commentRequestInfo").textContent =
+        `Comments for service request #${requestId}`;
+
+    showPage("comments");
+
+    const commentsList = document.getElementById("commentsList");
+    commentsList.textContent = "Loading comments...";
+
+    try {
+        const data = await api(ENDPOINTS.comments(requestId));
+
+        const comments = data.comments || [];
+
+        if (comments.length === 0) {
+            commentsList.textContent = "No comments yet.";
+            return;
+        }
+
+        commentsList.innerHTML = comments.map(comment => `
+            <div class="panel" style="margin-top: 12px;">
+                <strong>${escapeHTML(comment.user_name)}</strong>
+                <p>${escapeHTML(comment.message)}</p>
+            </div>
+        `).join("");
+    } catch (error) {
+        commentsList.textContent = error.message;
+    }
+}
+
+document.getElementById("commentForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!activeCommentRequestId) {
+        showMessage("Select a service request first.", "error");
+        return;
+    }
+
+    const messageInput = document.getElementById("commentMessage");
+    const message = messageInput.value.trim();
+
+    if (!message) {
+        showMessage("Please enter a comment.", "error");
+        return;
+    }
+
+    try {
+        await api(ENDPOINTS.comments(activeCommentRequestId), {
+            method: "POST",
+            body: JSON.stringify({ message })
+        });
+
+        messageInput.value = "";
+        showMessage("Comment added successfully.");
+        await openComments(activeCommentRequestId);
+    } catch (error) {
+        showMessage(error.message, "error");
+    }
+});
+</script>
+
+</body>
+</html>
